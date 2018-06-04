@@ -7,15 +7,17 @@ define([
   'esri/graphic',
   'esri/layers/GraphicsLayer',
   'esri/symbols/SimpleLineSymbol',
-  'esri/Color'
+  'esri/Color',
+  'esri/config',
+  'esri/geometry/geometryEngine'
 ],
-  function (declare, BaseWidget, QueryTask, Query, Graphic, GraphicsLayer, SimpleLineSymbol, Color) {
+  function (declare, BaseWidget, QueryTask, Query, Graphic, GraphicsLayer, SimpleLineSymbol, Color, esriConfig, geoEngine) {
     return declare([BaseWidget], {
 
       baseClass: 'construction-projects-widget',
 
       countiesLyr: 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Civil_Boundaries/FeatureServer/2',
-      constructionProjectsLyr: 'https://gis3.dot.ny.gov/arcgis/rest/services/ActiveProjects/MapServer/0',
+      constructionProjectsLyr: 'https://gistest3.dot.ny.gov/arcgis/rest/services/ActiveProjects/MapServer/0',
 
       currCountyGraphicsLyr: null, // graphics layer which represents the current county 
 
@@ -24,6 +26,10 @@ define([
       // methods to communication with app container:
       postCreate: function () {
         this.inherited(arguments);
+
+        // esriConfig.defaults.io.proxyUrl = "http://localhost/proxy.php"
+        // esriConfig.defaults.io.alwaysUseProxy = false;
+
         console.log('ConstructionProjectsWidget::postCreate');
       },
 
@@ -37,10 +43,11 @@ define([
             let countyGeometry = result.features["0"].geometry;
             // Assign county name to RESULTS BOX display here
             this._outlineCounty(countyGeometry);
-            let projectsData = this._getProjectsByCounty(countyGeometry);
+            let projectsDataForCounty = this._getProjectsByCounty(countyGeometry);
             console.log("on the way to projects for the county");
-            projectsData.then(projectsInCounty => {
+            projectsDataForCounty.then(projectsInCounty => {
               console.log(projectsInCounty);
+              this._displayProjects(projectsInCounty.features);
             }, err => {
               console.log("error,", err);
             });
@@ -63,7 +70,7 @@ define([
       },
 
       _outlineCounty: function (countyGeometry) {
-        if(this.currCountyGraphicsLyr){
+        if (this.currCountyGraphicsLyr) {
           this.map.removeLayer(this.currCountyGraphicsLyr);
         }
         let outline = new SimpleLineSymbol();
@@ -78,16 +85,27 @@ define([
         console.log("graphic added");
       },
 
-      _getProjectsByCounty(countyGeometry){
+      _getProjectsByCounty(countyGeometry) {
         var queryTask = new QueryTask(this.constructionProjectsLyr);
 
         var query = new Query();
-        query.geometry = countyGeometry;
+        query.geometry = geoEngine.generalize(countyGeometry, 10000, true, "feet");
         query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
         query.returnGeometry = true;
+        query.where = "1=1";
+        query.outFields = ["*"];
+
+        console.log(query);
 
         return queryTask.execute(query);
+      },
+
+
+      _displayProjects(projects){
+        
       }
+
+
       // startup() {
       //   this.inherited(arguments);
       //   console.log('ConstructionProjectsWidget::startup');

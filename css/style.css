@@ -1,9 +1,40 @@
-.construction-projects-widget h3 {
-  font-size: 1.2em; }
+.results-panel {
+  background-color: white;
+  border-radius: 20px;
+  margin: 10px;
+  width: 350px;
+  display: flex;
+  flex-direction: column; }
 
-.construction-projects-widget h3, .construction-projects-widget p {
-  margin-top: 0; }
+.results-header {
+  background-color: black;
+  width: 100%;
+  border-radius: 20px 20px 0px 0px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between; }
 
-/* add additional custom styles */
+h2 h6 {
+  margin: 0px; }
+
+.large-text-size {
+  font-size: 18px; }
+
+.medium-text-size {
+  font-size: 15px; }
+
+.results-header-text-color {
+  color: white; }
+
+.small-flex {
+  display: flex;
+  align-items: center; }
+
+.results-body {
+  display: flex;
+  justify-content: center; }
+
+.results-body-content {
+  padding: 10px; }
 
 /*# sourceMappingURL=style.css.map */

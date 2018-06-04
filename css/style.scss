@@ -1,10 +1,53 @@
-.construction-projects-widget {
-  h3 {
-    font-size: 1.2em;
-  }
-  h3, p {
-    margin-top: 0;
-  }
+$size-of-results-panel: 350px;
+
+$outer-radius: 20px;
+
+
+.results-panel{
+  background-color: white;
+  border-radius: $outer-radius;
+  margin: 10px;
+  width: $size-of-results-panel;
+  display: flex;
+  flex-direction: column;
 }
 
-/* add additional custom styles */
+.results-header{
+  background-color: black;
+  width: 100%;
+  border-radius: $outer-radius $outer-radius 0px 0px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+// Undo a dojo style
+h2 h6{
+  margin: 0px;
+}
+
+.large-text-size{
+  font-size: 18px;
+}
+
+.medium-text-size{
+  font-size: 15px;
+}
+
+.results-header-text-color{
+  color:white;
+}
+
+.small-flex{
+  display: flex;
+  align-items: center;
+}
+
+.results-body{
+  display: flex;
+  justify-content: center;
+}
+
+.results-body-content{
+  padding:10px;
+}

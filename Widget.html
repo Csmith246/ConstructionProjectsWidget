@@ -1,7 +1,28 @@
 <div>
 
-  <h3>${nls.widgetTitle}</h3>
-  <p>${nls.description}</p>
+  <div class="results-panel">
+    
+    <div class="results-header results-header-text-color">
+      <span class="large-text-size">
+        <strong>Projects</strong>
+      </span>
+      <div class="small-flex">
+        <span>displayed by:</span>
+        <div>
+          <select name="filter" id="">
+            <option value="county">County</option>
+            <option value="view">View Extent</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-  <p>Service URL: ${config.serviceUrl}</p>
+    <div class="results-body">
+      <div class="results-body-content" id="results-content" >
+        <span class="medium-text-size">Search to display Results</span>
+      </div>
+    </div>
+
+  </div>
+
 </div>

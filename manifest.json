@@ -11,7 +11,7 @@
   "copyright": "",
   "license": "ISC",
   "properties": {
-    "inPanel": true,
+    "inPanel": false,
     "hasLocale": true,
     "hasStyle": true,
     "hasConfig": true,
