@@ -1,3 +1,5 @@
+/* VARS */
+/* RESULTS HEADER */
 .results-panel {
   background-color: white;
   border-radius: 20px;
@@ -14,15 +16,6 @@
   display: flex;
   justify-content: space-between; }
 
-h2 h6 {
-  margin: 0px; }
-
-.large-text-size {
-  font-size: 18px; }
-
-.medium-text-size {
-  font-size: 15px; }
-
 .results-header-text-color {
   color: white; }
 
@@ -30,11 +23,33 @@ h2 h6 {
   display: flex;
   align-items: center; }
 
+/* RESULTS BODY */
 .results-body {
   display: flex;
-  justify-content: center; }
+  justify-content: center;
+  flex-direction: column; }
 
 .results-body-content {
   padding: 10px; }
+
+.resultsList {
+  max-height: 300px;
+  overflow-y: scroll; }
+
+.zoomBtn {
+  background-color: #35a9de;
+  border-color: #35a9de;
+  border-radius: 28px;
+  cursor: pointer; }
+
+/* UTILITIES */
+.large-text-size {
+  font-size: 18px; }
+
+.medium-text-size {
+  font-size: 15px; }
+
+h2 h6 {
+  margin: 0px; }
 
 /*# sourceMappingURL=style.css.map */

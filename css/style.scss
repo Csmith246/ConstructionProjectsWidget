@@ -1,7 +1,11 @@
+/* VARS */
+
 $size-of-results-panel: 350px;
 
 $outer-radius: 20px;
 
+
+/* RESULTS HEADER */
 
 .results-panel{
   background-color: white;
@@ -21,19 +25,6 @@ $outer-radius: 20px;
   justify-content: space-between;
 }
 
-// Undo a dojo style
-h2 h6{
-  margin: 0px;
-}
-
-.large-text-size{
-  font-size: 18px;
-}
-
-.medium-text-size{
-  font-size: 15px;
-}
-
 .results-header-text-color{
   color:white;
 }
@@ -43,11 +34,53 @@ h2 h6{
   align-items: center;
 }
 
+
+/* RESULTS BODY */
+
 .results-body{
   display: flex;
   justify-content: center;
+  flex-direction: column;
+
+
 }
 
 .results-body-content{
   padding:10px;
 }
+
+.resultsList{
+  max-height: 300px;
+  overflow-y:scroll; 
+}
+
+.listItem{
+
+}
+
+.zoomBtn{
+  background-color:#35a9de;
+  border-color: #35a9de;
+	// -moz-border-radius:28px;
+	// -webkit-border-radius:28px;
+  border-radius:28px;
+  cursor: pointer;
+}
+
+
+/* UTILITIES */
+
+.large-text-size{
+  font-size: 18px;
+}
+
+.medium-text-size{
+  font-size: 15px;
+}
+
+
+// Undo a dojo style
+h2 h6{
+  margin: 0px;
+}
+

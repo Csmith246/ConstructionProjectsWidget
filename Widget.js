@@ -9,9 +9,13 @@ define([
   'esri/symbols/SimpleLineSymbol',
   'esri/Color',
   'esri/config',
-  'esri/geometry/geometryEngine'
+  'esri/geometry/geometryEngine',
+  'dojo/dom',
+  'dojo/dom-construct',
+  'dojo/on'
 ],
-  function (declare, BaseWidget, QueryTask, Query, Graphic, GraphicsLayer, SimpleLineSymbol, Color, esriConfig, geoEngine) {
+  function (declare, BaseWidget, QueryTask, Query, Graphic, GraphicsLayer, SimpleLineSymbol, Color, esriConfig, geoEngine,
+    dom, domConstruct, on) {
     return declare([BaseWidget], {
 
       baseClass: 'construction-projects-widget',
@@ -42,11 +46,12 @@ define([
             console.log(result);
             let countyGeometry = result.features["0"].geometry;
             // Assign county name to RESULTS BOX display here
+            this.currentCounty.innerHTML = result.features["0"].attributes.NAME;
             this._outlineCounty(countyGeometry);
             let projectsDataForCounty = this._getProjectsByCounty(countyGeometry);
             console.log("on the way to projects for the county");
             projectsDataForCounty.then(projectsInCounty => {
-              console.log(projectsInCounty);
+              console.log("PROJECTS IN COUNTY", projectsInCounty);
               this._displayProjects(projectsInCounty.features);
             }, err => {
               console.log("error,", err);
@@ -101,8 +106,47 @@ define([
       },
 
 
-      _displayProjects(projects){
-        
+      _displayProjects(projects) {
+        let mainList = domConstruct.create("ul", {
+          className: "resultsList"
+        }, this.resultsDisplay); //Dojo data attach point
+
+        for (let x = 0; x < projects.length; x++) {
+          this._constructResultItem(projects[x], mainList);
+        }
+      },
+
+
+      _constructResultItem(projectItem, list) {
+        // Zoom and Popup Handled here
+        function handleZoomTo(evt, destPoint) {
+          console.log(this);
+
+          this.map.infoWindow.hide();
+
+          this.map.centerAt(destPoint).then(function(destPoint){
+            // Simulate click on map to bring up pop-up
+            var centerScreen = this.map.toScreen(destPoint);
+            this.map.onClick({
+              mapPoint: destPoint,
+              screenPoint: centerScreen
+            });
+          }.bind(this, destPoint));
+        }
+
+        divElem = domConstruct.create("div", {}, list);
+
+        domConstruct.create("li", {
+          className: "listItem",
+          innerHTML: projectItem.attributes.TITLE
+        }, divElem);
+
+        let zoomButton = domConstruct.create("button", {
+          className: "zoomBtn",
+          innerHTML: "<img width='14px' height='20px' src='./widgets/ConstructionProjectsWidget/images/zoomTo.png' />"
+        }, divElem);
+
+        on(zoomButton, "click", handleZoomTo.bind(this, null, projectItem.geometry));
       }
 
 
