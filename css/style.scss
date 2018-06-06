@@ -5,6 +5,9 @@ $size-of-results-panel: 350px;
 $outer-radius: 20px;
 
 
+
+
+
 /* RESULTS HEADER */
 
 .results-panel{
@@ -35,28 +38,83 @@ $outer-radius: 20px;
 }
 
 
+
+
+
+
 /* RESULTS BODY */
 
 .results-body{
   display: flex;
   justify-content: center;
   flex-direction: column;
-
-
 }
 
-.results-body-content{
-  padding:10px;
+.results-body-default-message{
+  text-align: center;
+  padding: 10px;
+}
+
+.results-body-content-list{
+  display: none;
 }
 
 .resultsList{
   max-height: 300px;
-  overflow-y:scroll; 
+  overflow-y:scroll;
 }
 
-.listItem{
-
+.resultsListFlex{
+  display: flex;
+  flex-direction: column;
 }
+
+.flexRow{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // margin: 5px;
+}
+
+
+// get these borders to be smaller
+
+.resultListFormat:last-child::before{
+  border-bottom: 0px;
+}
+
+.resultListFormat:first-child::before{
+  content: "";
+  position: absolute;
+  left    : 25%;
+  bottom  : 0;
+  height  : 1px;
+  width   : 50%;  /* or 100px */
+  border-top: 1px solid;
+  border-bottom: 0px;
+}
+
+.resultListFormat:before{
+  content:"";
+  position: absolute;
+  left    : 5%;
+  bottom  : 0;
+  height  : 1px;
+  width   : 90%;  /* or 100px */
+  border-bottom: 1px solid;
+}
+
+.resultListFormat{
+  position: relative;
+  z-index : 1;
+  padding-left: 10px;
+  padding-right: 6px;
+  // border-top: 1px solid;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+
 
 .zoomBtn{
   background-color:#35a9de;
@@ -68,6 +126,8 @@ $outer-radius: 20px;
 }
 
 
+
+
 /* UTILITIES */
 
 .large-text-size{
@@ -77,6 +137,16 @@ $outer-radius: 20px;
 .medium-text-size{
   font-size: 15px;
 }
+
+.centerText {
+  text-align: center;
+}
+
+.padding-10px{
+  padding: 10px;
+}
+
+
 
 
 // Undo a dojo style

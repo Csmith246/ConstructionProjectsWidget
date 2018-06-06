@@ -1,7 +1,7 @@
 <div>
 
   <div class="results-panel">
-    
+
     <div class="results-header results-header-text-color">
       <span class="large-text-size">
         <strong>Projects</strong>
@@ -18,11 +18,13 @@
     </div>
 
     <div class="results-body">
-      <div class="results-body-content" id="results-content" >
+      <div class="results-body-default-message" id="default-message">
         <span class="medium-text-size">Search to display Results</span>
       </div>
-      <div>Current County <span data-dojo-attach-point="currentCounty"></span></div>
-      <div data-dojo-attach-point="resultsDisplay"></div>
+      <div class="results-body-content-list" id="content-list">
+        <div class="medium-text-size centerText padding-10px" id="countySection">Current County: <strong data-dojo-attach-point="currentCounty"></strong></div>
+        <div data-dojo-attach-point="resultsDisplay"></div>
+      </div>
     </div>
 
   </div>

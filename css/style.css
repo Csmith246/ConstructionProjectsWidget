@@ -29,12 +29,57 @@
   justify-content: center;
   flex-direction: column; }
 
-.results-body-content {
+.results-body-default-message {
+  text-align: center;
   padding: 10px; }
+
+.results-body-content-list {
+  display: none; }
 
 .resultsList {
   max-height: 300px;
   overflow-y: scroll; }
+
+.resultsListFlex {
+  display: flex;
+  flex-direction: column; }
+
+.flexRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; }
+
+.resultListFormat:last-child::before {
+  border-bottom: 0px; }
+
+.resultListFormat:first-child::before {
+  content: "";
+  position: absolute;
+  left: 25%;
+  bottom: 0;
+  height: 1px;
+  width: 50%;
+  /* or 100px */
+  border-top: 1px solid;
+  border-bottom: 0px; }
+
+.resultListFormat:before {
+  content: "";
+  position: absolute;
+  left: 5%;
+  bottom: 0;
+  height: 1px;
+  width: 90%;
+  /* or 100px */
+  border-bottom: 1px solid; }
+
+.resultListFormat {
+  position: relative;
+  z-index: 1;
+  padding-left: 10px;
+  padding-right: 6px;
+  padding-top: 3px;
+  padding-bottom: 3px; }
 
 .zoomBtn {
   background-color: #35a9de;
@@ -48,6 +93,12 @@
 
 .medium-text-size {
   font-size: 15px; }
+
+.centerText {
+  text-align: center; }
+
+.padding-10px {
+  padding: 10px; }
 
 h2 h6 {
   margin: 0px; }
