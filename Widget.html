@@ -34,7 +34,15 @@
         <div data-dojo-attach-point="resultsDisplay"></div>
       </div>
       <div id="view-content-list">
-          <div data-dojo-attach-point="viewDisplay"></div>
+        <div class="results-body-content-header padding-10px">
+          <button data-dojo-attach-event="onClick:showProjectsByViewExtent">Refresh List</button>
+          <div class="checkBoxFormat">
+            <input data-dojo-attach-event="onChange:toggleAutoRefresh" data-dojo-attach-point="autoRefreshCheckBox" name="autoCheck"
+              type="checkbox">
+            <span class="padding-left-med">Auto Refresh</span>
+          </div>
+        </div>
+        <div data-dojo-attach-point="viewDisplay"></div>
       </div>
     </div>
 

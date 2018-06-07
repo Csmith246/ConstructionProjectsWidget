@@ -33,8 +33,9 @@ define([
 
         // esriConfig.defaults.io.proxyUrl = "http://localhost/proxy.php"
         // esriConfig.defaults.io.alwaysUseProxy = false;
-
         console.log('ConstructionProjectsWidget::postCreate');
+
+        //this._changeResultsDisplay("showDefault");
       },
 
 
@@ -42,13 +43,13 @@ define([
         console.log("IN SELECTBOX CHG");
         switch (this.displayBy.value) {
           case "county":
-            this.unsetViewResults();  
+            this.unsetViewResults();
             this.resetDisplayToDefault();
             break;
           case "view":
             this.resetDisplayToDefault();
             this._changeResultsDisplay("showViewList");
-            this.setUpViewResults();
+            this.showProjectsByViewExtent();
             break;
           default:
             console.log("In default for handleDisplayByChange");
@@ -56,21 +57,36 @@ define([
       },
 
 
-      setUpViewResults(){
+      setUpViewResults() {
         this.showProjectsByViewExtent();
         this.viewMapChanger = on(this.map, "update-end", this.showProjectsByViewExtent.bind(this));
       },
 
 
-      unsetViewResults(){
-        this.viewMapChanger.remove();
-        this.viewMapChanger = null;
+      unsetViewResults() {
+        if(this.autoRefreshCheckBox.checked){
+          this.autoRefreshCheckBox.checked = false;
+        }
+        if (this.viewMapChanger) {
+          this.viewMapChanger.remove();
+          this.viewMapChanger = null;
+        }
       },
 
 
-      showProjectsByViewExtent(){
+      toggleAutoRefresh(){
+        console.log(this.autoRefreshCheckBox.checked);
+        if(this.autoRefreshCheckBox.checked){
+          this.setUpViewResults();
+        }else{
+          this.unsetViewResults();
+        }
+      },
+
+
+      showProjectsByViewExtent() {
         console.log("In thingy");
-        if(this.deferredInProgress){
+        if (this.deferredInProgress) {
           console.log("In cancel");
           this.deferredInProgress.cancel("Not fast ENough");
         }
@@ -85,7 +101,7 @@ define([
       },
 
 
-      getProjectsByExtent(){
+      getProjectsByExtent() {
         var queryTask = new QueryTask(this.constructionProjectsLyr);
 
         var query = new Query();
@@ -233,7 +249,7 @@ define([
         domConstruct.empty(this.resultsDisplay);
       },
 
-      _clearViewResultsList(){
+      _clearViewResultsList() {
         domConstruct.empty(this.viewDisplay);
       },
 
@@ -272,35 +288,6 @@ define([
         }.bind(this, destPoint));
       }
 
-
-      // startup() {
-      //   this.inherited(arguments);
-      //   console.log('ConstructionProjectsWidget::startup');
-      // },
-      // onOpen() {
-      //   console.log('ConstructionProjectsWidget::onOpen');
-      // },
-      // onClose(){
-      //   console.log('ConstructionProjectsWidget::onClose');
-      // },
-      // onMinimize(){
-      //   console.log('ConstructionProjectsWidget::onMinimize');
-      // },
-      // onMaximize(){
-      //   console.log('ConstructionProjectsWidget::onMaximize');
-      // },
-      // onSignIn(credential){
-      //   console.log('ConstructionProjectsWidget::onSignIn', credential);
-      // },
-      // onSignOut(){
-      //   console.log('ConstructionProjectsWidget::onSignOut');
-      // }
-      // onPositionChange(){
-      //   console.log('ConstructionProjectsWidget::onPositionChange');
-      // },
-      // resize(){
-      //   console.log('ConstructionProjectsWidget::resize');
-      // }
     });
 
   });
