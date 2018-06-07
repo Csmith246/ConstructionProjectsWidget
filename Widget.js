@@ -1,4 +1,3 @@
-
 define([
   'dojo/_base/declare',
   'jimu/BaseWidget',
@@ -25,6 +24,9 @@ define([
       constructionProjectsLyr: 'https://gistest3.dot.ny.gov/arcgis/rest/services/ActiveProjects/MapServer/0',
 
       currCountyGraphicsLyr: null, // graphics layer which represents the current county 
+      viewMapChanger: null, // event listner for map change
+      deferredInProgress: null, // the deferred that is in progress
+
 
       postCreate: function () {
         this.inherited(arguments);
@@ -35,13 +37,76 @@ define([
         console.log('ConstructionProjectsWidget::postCreate');
       },
 
+
+      handleDisplayByChange() {
+        console.log("IN SELECTBOX CHG");
+        switch (this.displayBy.value) {
+          case "county":
+            this.unsetViewResults();  
+            this.resetDisplayToDefault();
+            break;
+          case "view":
+            this.resetDisplayToDefault();
+            this._changeResultsDisplay("showViewList");
+            this.setUpViewResults();
+            break;
+          default:
+            console.log("In default for handleDisplayByChange");
+        }
+      },
+
+
+      setUpViewResults(){
+        this.showProjectsByViewExtent();
+        this.viewMapChanger = on(this.map, "update-end", this.showProjectsByViewExtent.bind(this));
+      },
+
+
+      unsetViewResults(){
+        this.viewMapChanger.remove();
+        this.viewMapChanger = null;
+      },
+
+
+      showProjectsByViewExtent(){
+        console.log("In thingy");
+        if(this.deferredInProgress){
+          console.log("In cancel");
+          this.deferredInProgress.cancel("Not fast ENough");
+        }
+        let deferred = this.getProjectsByExtent();
+        this.deferredInProgress = deferred;
+        deferred.then(res => {
+          this.deferredInProgress = null;
+          console.log(res);
+          this._clearViewResultsList();
+          this._displayProjects(res.features, this.viewDisplay);
+        });
+      },
+
+
+      getProjectsByExtent(){
+        var queryTask = new QueryTask(this.constructionProjectsLyr);
+
+        var query = new Query();
+        query.geometry = this.map.extent;
+        query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+        query.returnGeometry = true;
+        query.where = "1=1";
+        query.outFields = ["*"];
+
+        return queryTask.execute(query);
+      },
+
+
+      // fires when search is performed in search box
       onReceiveData: function (name, widgetId, data) {
         console.log("OUTPUT:::", name, widgetId, data);
-        if (name === "Search" && data["selectResult"]) {
+        if (name === "Search" && data["selectResult"] && this.displayBy.value === "county") {
           let countyDeferred = this._getCountyThatPointIsIn(data.selectResult.result.feature.geometry);
           countyDeferred.then(result => {
             // Update Ui
-            this._toggleResultsDisplay("showList");
+            this._changeResultsDisplay("showSearchList");
             let countyGeometry = result.features["0"].geometry;
             this.currentCounty.innerHTML = result.features["0"].attributes.NAME; // Display County in UI
             this._outlineCounty(countyGeometry);
@@ -49,7 +114,10 @@ define([
             // Use county geom to find projects
             let projDataForCountyDeferred = this._getProjectsByCounty(countyGeometry);
             projDataForCountyDeferred.then(projectsInCounty => {
-              this._displayProjects(projectsInCounty.features);
+              //Get rid of old search results
+              this._clearSearchResultsList();
+              //populate new search results
+              this._displayProjects(projectsInCounty.features, this.resultsDisplay); //data dojo attach point
             }, err => {
               console.log("Error getting Project information: ", err);
             });
@@ -59,6 +127,7 @@ define([
           });
         }
       },
+
 
       _getCountyThatPointIsIn: function (pointGeometry) {
         var queryTask = new QueryTask(this.countiesLyr);
@@ -71,10 +140,9 @@ define([
         return queryTask.execute(query);
       },
 
+
       _outlineCounty: function (countyGeometry) {
-        if (this.currCountyGraphicsLyr) {
-          this.map.removeLayer(this.currCountyGraphicsLyr);
-        }
+        this._removeCountyOutline();
         let outline = new SimpleLineSymbol();
         outline.setColor(new Color([255, 255, 0, 1]));
         outline.setWidth(5.75);
@@ -86,6 +154,7 @@ define([
         this.map.addLayer(graphicslayer);
         console.log("outline graphic added");
       },
+
 
       _getProjectsByCounty(countyGeometry) { // REFACTOR to include queries to all Project types, then return All Promises
         var queryTask = new QueryTask(this.constructionProjectsLyr);
@@ -101,21 +170,37 @@ define([
       },
 
 
-      _toggleResultsDisplay(newCase) {
-        let list = dom.byId("content-list");
+      _changeResultsDisplay(newCase) {
+        let searchList = dom.byId("search-content-list");
         let defaultMsg = dom.byId("default-message");
-        switch(newCase) {
-          case "showList":
-            domStyle.set(list, "display", "block");
+        let viewList = dom.byId("view-content-list");
+        switch (newCase) {
+          case "showSearchList":
+            domStyle.set(searchList, "display", "block");
             domStyle.set(defaultMsg, "display", "none");
+            domStyle.set(viewList, "display", "none");
+            break;
+          case "showViewList":
+            domStyle.set(searchList, "display", "none");
+            domStyle.set(defaultMsg, "display", "none");
+            domStyle.set(viewList, "display", "block");
+            break;
+          case "showDefault":
+            domStyle.set(searchList, "display", "none");
+            domStyle.set(defaultMsg, "display", "block");
+            domStyle.set(viewList, "display", "none");
+            break;
+          default:
+            console.log("In Default of switch statement... Yo.");
+            break;
         }
       },
 
 
-      _displayProjects(projects) {
+      _displayProjects(projects, domRoot) {
         let mainList = domConstruct.create("div", {
           className: "resultsList"
-        }, this.resultsDisplay); //data dojo attach point
+        }, domRoot);
 
         let mainColFlex = domConstruct.create("div", {
           className: "resultsListFlex"
@@ -128,29 +213,56 @@ define([
 
 
       _constructResultItem(projectItem, mainColumnArea) {
-        // Zoom and Popup Handled here
-
-        divElem = domConstruct.create("div", {className: "flexRow resultListFormat"}, mainColumnArea);
+        rowElem = domConstruct.create("div", { className: "flexRow resultListFormat" }, mainColumnArea);
 
         domConstruct.create("p", {
           className: "resultItemText",
           innerHTML: projectItem.attributes.TITLE
-        }, divElem);
+        }, rowElem);
 
         let zoomButton = domConstruct.create("button", {
           className: "zoomBtn",
           innerHTML: "<img width='14px' height='20px' src='./widgets/ConstructionProjectsWidget/images/zoomTo.png' />"
-        }, divElem);
+        }, rowElem);
 
-        on(zoomButton, "click", this.zoomAndSimulateClick.bind(this, null, projectItem.geometry));
+        on(rowElem, "click", this.pointZoomAndSimulateClick.bind(this, null, projectItem.geometry));
       },
 
 
-      zoomAndSimulateClick(evt, destPoint) {
+      _clearSearchResultsList() {
+        domConstruct.empty(this.resultsDisplay);
+      },
+
+      _clearViewResultsList(){
+        domConstruct.empty(this.viewDisplay);
+      },
+
+
+      _removeCountyOutline() {
+        if (this.currCountyGraphicsLyr) {
+          this.map.removeLayer(this.currCountyGraphicsLyr);
+        }
+        this.currCountyGraphicsLyr = null;
+      },
+
+
+      resetDisplayToDefault() {
+        this._clearSearchResultsList();
+        this._changeResultsDisplay("showDefault");
+        this._removeCountyOutline();
+      },
+
+
+      zoomToCounty() {
+        this.map.setExtent(this.currCountyGraphicsLyr.graphics["0"]._extent);
+      },
+
+
+      pointZoomAndSimulateClick(evt, destPoint) {
 
         this.map.infoWindow.hide();
 
-        this.map.centerAt(destPoint).then(function(destPoint){
+        this.map.centerAt(destPoint).then(function (destPoint) {
           // Simulate click on map to bring up pop-up
           var centerOfScreen = this.map.toScreen(destPoint);
           this.map.onClick({

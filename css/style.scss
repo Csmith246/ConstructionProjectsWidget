@@ -17,6 +17,7 @@ $outer-radius: 20px;
   width: $size-of-results-panel;
   display: flex;
   flex-direction: column;
+  z-index: 10;
 }
 
 .results-header{
@@ -55,8 +56,19 @@ $outer-radius: 20px;
   padding: 10px;
 }
 
-.results-body-content-list{
+#search-content-list{
   display: none;
+}
+
+.results-body-content-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.countyFormat{
+  display: flex;
+  align-items: center;
 }
 
 .resultsList{
@@ -83,16 +95,16 @@ $outer-radius: 20px;
   border-bottom: 0px;
 }
 
-.resultListFormat:first-child::before{
-  content: "";
-  position: absolute;
-  left    : 25%;
-  bottom  : 0;
-  height  : 1px;
-  width   : 50%;  /* or 100px */
-  border-top: 1px solid;
-  border-bottom: 0px;
-}
+// .resultListFormat:first-child::after{
+//   content: "";
+//   position: absolute;
+//   left    : 25%;
+//   bottom  : 0;
+//   height  : 1px;
+//   width   : 50%;  /* or 100px */
+//   border-top: 1px solid;
+//   border-bottom: 0px;
+// }
 
 .resultListFormat:before{
   content:"";
@@ -114,6 +126,17 @@ $outer-radius: 20px;
   padding-bottom: 3px;
 }
 
+
+.resultListFormat:hover{
+  background-color: #c4c4c4;
+  cursor: pointer;
+}
+
+
+.resultItemText{
+  width:100%;
+  text-align: center;
+}
 
 
 .zoomBtn{
@@ -144,6 +167,10 @@ $outer-radius: 20px;
 
 .padding-10px{
   padding: 10px;
+}
+
+.padding-right-med{
+  padding-right: 5px;
 }
 
 

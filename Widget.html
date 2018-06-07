@@ -9,8 +9,8 @@
       <div class="small-flex">
         <span>displayed by:</span>
         <div>
-          <select name="filter" id="">
-            <option value="county">County</option>
+          <select data-dojo-attach-point="displayBy" data-dojo-attach-event="onChange:handleDisplayByChange" name="" id="">
+            <option selected value="county">County</option>
             <option value="view">View Extent</option>
           </select>
         </div>
@@ -21,9 +21,20 @@
       <div class="results-body-default-message" id="default-message">
         <span class="medium-text-size">Search to display Results</span>
       </div>
-      <div class="results-body-content-list" id="content-list">
-        <div class="medium-text-size centerText padding-10px" id="countySection">Current County: <strong data-dojo-attach-point="currentCounty"></strong></div>
+      <div id="search-content-list">
+        <div class="results-body-content-header padding-10px">
+          <div class="medium-text-size countyFormat" id="countySection">Current County:&nbsp;
+            <strong class="padding-right-med" data-dojo-attach-point="currentCounty"></strong>
+            <button class="zoomBtn" data-dojo-attach-event="onClick:zoomToCounty">
+              <img width='14px' height='20px' src='./widgets/ConstructionProjectsWidget/images/zoomTo.png' alt="">
+            </button>
+          </div>
+          <button data-dojo-attach-event="onClick:resetDisplayToDefault">Clear</button>
+        </div>
         <div data-dojo-attach-point="resultsDisplay"></div>
+      </div>
+      <div id="view-content-list">
+          <div data-dojo-attach-point="viewDisplay"></div>
       </div>
     </div>
 
