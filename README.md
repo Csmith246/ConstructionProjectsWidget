@@ -1,5 +1,5 @@
 # ConstructionProjectsWidget
 
-TODO:
+Custom Widget to be used in a Web AppBuilder Application. 
 
-When complete, write up README and link to site where this can be seen in action.
+Live Demo can be seen [here](https://gistest3.dot.ny.gov/ConstructionProjects)
