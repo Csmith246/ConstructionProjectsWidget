@@ -39,7 +39,7 @@ define([
         // esriConfig.defaults.io.alwaysUseProxy = false;
         console.log('ConstructionProjectsWidget::postCreate');
 
-        //this._changeResultsDisplay("showDefault");
+        this.map.disableKeyboardNavigation();
       },
 
 
@@ -47,6 +47,7 @@ define([
         console.log("IN SELECTBOX CHG");
         switch (this.displayBy.value) {
           case "county":
+            this._clearViewResultsList(); /////////////
             this.unsetViewResults();
             this.resetDisplayToDefault();
             break;
@@ -68,10 +69,10 @@ define([
 
 
       unsetViewResults() {
-        if(this.autoRefreshCheckBox.checked){
+        if(this.autoRefreshCheckBox.checked){ //uncheck box
           this.autoRefreshCheckBox.checked = false;
         }
-        if (this.viewMapChanger) {
+        if (this.viewMapChanger) { // remove listener
           this.viewMapChanger.remove();
           this.viewMapChanger = null;
         }
@@ -79,11 +80,15 @@ define([
 
 
       toggleAutoRefresh(){
-        console.log(this.autoRefreshCheckBox.checked);
+        //console.log(this.autoRefreshCheckBox.checked);
+        let searchBox = dom.byId("search");
+        
         if(this.autoRefreshCheckBox.checked){
           this.setUpViewResults();
+          domStyle.set(searchBox, "display", "none"); // Hide search when auto is on
         }else{
           this.unsetViewResults();
+          domStyle.set(searchBox, "display", "block");
         }
       },
 
@@ -194,21 +199,25 @@ define([
         let searchList = dom.byId("search-content-list");
         let defaultMsg = dom.byId("default-message");
         let viewList = dom.byId("view-content-list");
+        let searchBox = dom.byId("search");
         switch (newCase) {
           case "showSearchList":
             domStyle.set(searchList, "display", "block");
             domStyle.set(defaultMsg, "display", "none");
             domStyle.set(viewList, "display", "none");
+            domStyle.set(searchBox, "display", "block");
             break;
           case "showViewList":
             domStyle.set(searchList, "display", "none");
             domStyle.set(defaultMsg, "display", "none");
             domStyle.set(viewList, "display", "block");
+            domStyle.set(searchBox, "display", "block");
             break;
           case "showDefault":
             domStyle.set(searchList, "display", "none");
             domStyle.set(defaultMsg, "display", "block");
             domStyle.set(viewList, "display", "none");
+            domStyle.set(searchBox, "display", "none");
             break;
           default:
             console.log("In Default of switch statement... Yo.");
@@ -321,12 +330,13 @@ define([
         if(searchValue !== ""){
           let rowList = query(".flexRow");
           let textList = query(".resultItemText");
-
+          console.log(rowList);
+          console.log(textList);
+          
           array.forEach(rowList, function(row, i){
             domStyle.set(row, "display", "flex");
             
             let currText = textList[i].innerHTML.toLowerCase();
-            console.log(currText);
 
             if(currText.indexOf(searchValue)===-1){
               domStyle.set(row, "display", "none");
@@ -334,7 +344,7 @@ define([
 
           }, this);
           
-          console.log(textList);
+
         }
       },
 
