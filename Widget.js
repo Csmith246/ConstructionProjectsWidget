@@ -16,10 +16,11 @@ define([
   'dojo/dom-class',
   'dojo/fx',
   'dojo/query',
-  'dojo/_base/array'
+  'dojo/_base/array',
+  'esri/symbols/SimpleMarkerSymbol'
 ],
   function (declare, BaseWidget, QueryTask, Query, Graphic, GraphicsLayer, SimpleLineSymbol, Color, esriConfig, geoEngine,
-    dom, domConstruct, on, domStyle, domClass, fx, query, array) {
+    dom, domConstruct, on, domStyle, domClass, fx, query, array, SimpleMarkerSymbol) {
     return declare([BaseWidget], {
 
       baseClass: 'construction-projects-widget',
@@ -255,6 +256,42 @@ define([
         }, rowElem);
 
         on(rowElem, "click", this.pointZoomAndSimulateClick.bind(this, null, projectItem.geometry));
+
+
+        let outline = new SimpleLineSymbol();
+        outline.setColor(new Color([0, 0, 0, 1]));
+        outline.setWidth(1);
+
+        let point = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 12, outline, new Color([255, 255, 0, 1]));
+
+        let projectGraphic = new Graphic(projectItem.geometry, point);
+
+        let graphicslayer = new GraphicsLayer();
+        graphicslayer.add(projectGraphic);
+
+
+        on(rowElem, "mouseenter", (e)=>{
+          this.map.addLayer(graphicslayer);
+        });
+
+        on(rowElem, "mouseleave", (e)=>{
+          this.map.removeLayer(graphicslayer);
+        });
+      },
+
+
+      pointZoomAndSimulateClick(evt, destPoint) {
+
+        this.map.infoWindow.hide();
+
+        this.map.centerAt(destPoint).then(function (destPoint) {
+          // Simulate click on map to bring up pop-up
+          var centerOfScreen = this.map.toScreen(destPoint);
+          this.map.onClick({
+            mapPoint: destPoint,
+            screenPoint: centerOfScreen
+          });
+        }.bind(this, destPoint));
       },
 
 
@@ -287,20 +324,6 @@ define([
         this.map.setExtent(this.currCountyGraphicsLyr.graphics["0"]._extent);
       },
 
-
-      pointZoomAndSimulateClick(evt, destPoint) {
-
-        this.map.infoWindow.hide();
-
-        this.map.centerAt(destPoint).then(function (destPoint) {
-          // Simulate click on map to bring up pop-up
-          var centerOfScreen = this.map.toScreen(destPoint);
-          this.map.onClick({
-            mapPoint: destPoint,
-            screenPoint: centerOfScreen
-          });
-        }.bind(this, destPoint));
-      },
 
 
       toggleSearchVisiblility(){
