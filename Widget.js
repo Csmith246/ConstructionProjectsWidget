@@ -31,6 +31,7 @@ define([
       currCountyGraphicsLyr: null, // graphics layer which represents the current county 
       viewMapChanger: null, // event listner for map change
       deferredInProgress: null, // the deferred that is in progress
+      currHighlightGraphicsLyr: null,
 
 
       postCreate: function () {
@@ -258,6 +259,7 @@ define([
         on(rowElem, "click", this.pointZoomAndSimulateClick.bind(this, null, projectItem.geometry));
 
 
+        // mouseover graphics
         let outline = new SimpleLineSymbol();
         outline.setColor(new Color([0, 0, 0, 1]));
         outline.setWidth(1);
@@ -271,11 +273,16 @@ define([
 
 
         on(rowElem, "mouseenter", (e)=>{
+          if (this.currHighlightGraphicsLyr){
+            this.map.removeLayer(this.currHighlightGraphicsLyr);
+          }
           this.map.addLayer(graphicslayer);
+          this.currHighlightGraphicsLyr = graphicslayer;
         });
 
         on(rowElem, "mouseleave", (e)=>{
           this.map.removeLayer(graphicslayer);
+          this.currHighlightGraphicsLyr = null;
         });
       },
 

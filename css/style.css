@@ -7,7 +7,7 @@
   width: 350px;
   display: flex;
   flex-direction: column;
-  z-index: 10; }
+  z-index: 100; }
 
 .results-header {
   background-color: black;
