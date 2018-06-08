@@ -12,10 +12,14 @@ define([
   'dojo/dom',
   'dojo/dom-construct',
   'dojo/on',
-  'dojo/dom-style'
+  'dojo/dom-style',
+  'dojo/dom-class',
+  'dojo/fx',
+  'dojo/query',
+  'dojo/_base/array'
 ],
   function (declare, BaseWidget, QueryTask, Query, Graphic, GraphicsLayer, SimpleLineSymbol, Color, esriConfig, geoEngine,
-    dom, domConstruct, on, domStyle) {
+    dom, domConstruct, on, domStyle, domClass, fx, query, array) {
     return declare([BaseWidget], {
 
       baseClass: 'construction-projects-widget',
@@ -249,6 +253,7 @@ define([
         domConstruct.empty(this.resultsDisplay);
       },
 
+
       _clearViewResultsList() {
         domConstruct.empty(this.viewDisplay);
       },
@@ -286,7 +291,71 @@ define([
             screenPoint: centerOfScreen
           });
         }.bind(this, destPoint));
+      },
+
+
+      toggleSearchVisiblility(){
+        let arrow = dom.byId("searchArrow");
+        let searchBox = dom.byId("searchBoxContainer");
+        if(domClass.contains(arrow, "down")){
+          domClass.replace(arrow, "up", "down");
+          fx.wipeIn({
+            node: searchBox,
+            duration: 500
+          }).play();
+        }else if(domClass.contains(arrow, "up")){
+          domClass.replace(arrow, "down", "up");
+          fx.wipeOut({
+            node: searchBox,
+            duration: 500
+          }).play();
+        }else{
+          console.log("Error in toggleSearchVisiblility. Proper class is not applied.")
+        }
+      },
+
+
+      search(){
+        let searchValue = dom.byId("SearchBox").value.toLowerCase();
+        console.log("searchTerm", searchValue);
+        if(searchValue !== ""){
+          let rowList = query(".flexRow");
+          let textList = query(".resultItemText");
+
+          array.forEach(rowList, function(row, i){
+            domStyle.set(row, "display", "flex");
+            
+            let currText = textList[i].innerHTML.toLowerCase();
+            console.log(currText);
+
+            if(currText.indexOf(searchValue)===-1){
+              domStyle.set(row, "display", "none");
+            }
+
+          }, this);
+          
+          console.log(textList);
+        }
+      },
+
+
+      restoreRows(){
+        dom.byId("SearchBox").value = "";
+        let rowList = query(".flexRow");
+        array.forEach(rowList, function(row, i){
+          domStyle.set(row, "display", "flex");
+        }, this)
+      },
+
+
+      // Done to get Click on enter keypress to work. Before it would refresh the page
+      clickOnEnter(e){
+        e.preventDefault();
+        if(e.keyCode === 13){
+          this.search();
+        }
       }
+
 
     });
 

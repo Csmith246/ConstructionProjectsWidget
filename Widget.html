@@ -29,7 +29,7 @@
               <img width='14px' height='20px' src='./widgets/ConstructionProjectsWidget/images/zoomTo.png' alt="">
             </button>
           </div>
-          <button data-dojo-attach-event="onClick:resetDisplayToDefault">Clear</button>
+          <button data-dojo-attach-event="onClick:resetDisplayToDefault">Clear Results</button>
         </div>
         <div data-dojo-attach-point="resultsDisplay"></div>
       </div>
@@ -43,6 +43,19 @@
           </div>
         </div>
         <div data-dojo-attach-point="viewDisplay"></div>
+      </div>
+    </div>
+
+    <div class="search">
+      <div id="searchBoxContainer" style="height: auto; display: none;">
+        <div>
+          <input type="text" data-dojo-attach-event="keyup:clickOnEnter" maxlength="30" id="SearchBox" placeholder="Enter Project Name">
+          <button type="button" data-dojo-attach-event="onClick:search">Search</button>
+          <button data-dojo-attach-event="onClick:restoreRows">Clear</button>
+        </div>
+      </div>
+      <div class="arrowContainer" data-dojo-attach-event="onClick:toggleSearchVisiblility">
+        <i class="arrow down" id="searchArrow"></i>
       </div>
     </div>
 
