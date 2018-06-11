@@ -26,7 +26,7 @@ define([
       baseClass: 'construction-projects-widget',
 
       countiesLyr: 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Civil_Boundaries/FeatureServer/2',
-      constructionProjectsLyr: 'https://gistest3.dot.ny.gov/arcgis/rest/services/ActiveProjects/MapServer/0',
+      constructionProjectsLyr: 'https://gis3.dot.ny.gov/arcgis/rest/services/ActiveProjects/MapServer/0',
 
       currCountyGraphicsLyr: null, // graphics layer which represents the current county 
       viewMapChanger: null, // event listner for map change
